@@ -35,8 +35,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::get('product/deleted-list', [ProductController::class, 'deletedListIndex'])->name('product.deleted_list');
 Route::get('product/restore/{id}', [ProductController::class, 'restore'])->name('product.restore');
 Route::delete('product/force-delete/{id}', [ProductController::class, 'forceDelete'])->name('product.force_delete');
-Route::get('/product/edit/{id}', [ProductController::class, 'edit'])->name('product.edit');
-Route::post('product/status', [ProductController::class, 'status'])->name('product.status');
+Route::get('product/search', [ProductController::class, 'productSearch'])->name('product.search');
 Route::apiResource('product',ProductController::class);
 
 //purchase Detail

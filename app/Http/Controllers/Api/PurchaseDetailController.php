@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\PurchaseDetail;
+use App\Models\Stock;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PurchaseDetailController extends Controller
 {
@@ -36,7 +38,32 @@ class PurchaseDetailController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        try {
+            DB::beginTransaction();
+
+            PurchaseDetail::query()->create($request->all());
+            foreach ($request->product_detail_inputs as $key=>$item){
+                $stock = new Stock();
+                $stock->product_id = $item['id'];
+                $stock->quantity = $item['purchase_quantity'];
+                $stock->save();
+            }
+
+            DB::commit();
+
+            // Return success response
+            return response()->json([
+                'message' => 'Product Purchased successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            // Error handling or response
+            return response()->json([
+                'message' => 'An error occurred while saving data.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
